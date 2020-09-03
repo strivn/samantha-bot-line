@@ -1,0 +1,11 @@
+APScheduler==3.6.3
+beautifulsoup4==4.8.2
+cachetools==4.0.0
+Flask==1.1.1
+gunicorn==20.0.4
+line-bot-sdk==1.15.0
+requests==2.22.0
+psycopg2==2.8.4
+python-dateutil==2.8.1
+pytz==2019.3
+pyjwt==1.7.1

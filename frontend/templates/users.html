@@ -1,0 +1,48 @@
+{% include 'header.html' %}
+
+
+<div class="ui main container">
+    <h1 class="ui header">Users List</h1>
+    <p>Laman ini ditujukan untuk mengatur pengguna dalam Bot LINE Samantha</p>
+    
+</div>
+
+
+<div class="ui tables container">
+    <table id="user-table" class="ui celled table">
+        <thead>
+            <th>Display Name</th>
+            <th>Clearance</th>
+        </thead>
+        <tbody>
+            {% for display_name, clearance in data %}
+            <tr>
+                <td>{{display_name}}</td>
+                <td>
+                    <div class="ui toggle checkbox">
+                        {% if clearance == 2 %}
+                            <input onclick="toggleFungs('{{display_name}}', this);" type="checkbox" name="Fungs" checked>
+                        {% elif clearance == 1 %}
+                            <input onclick="toggleFungs('{{display_name}}', this);" type="checkbox" name="Fungs">
+                        {% endif %}
+                        <label>Fungs</label>
+                    </div>
+                </td>
+            </tr>
+            {% endfor%}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function toggleFungs(name, object){
+        $.post('/users/' + name, function(data){
+            if (data === 'False') {
+                object.checked = !object.checked;
+            }
+
+        });
+    }
+</script>
+
+{% include 'footer.html' %}

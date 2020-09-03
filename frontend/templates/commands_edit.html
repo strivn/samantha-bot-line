@@ -1,0 +1,71 @@
+{% include 'header.html' %}
+
+
+<div class="ui main text container">
+    <h1> Edit A Command</h1>
+    <div class="ui divider"></div>
+
+    <form class="ui form" action="/commands/{{data[0]}}" method="POST" autocomplete="off">
+
+        <div id="selectCategory" class="field">
+            <label>Type</label>
+            <select name="type" class="ui search dropdown" disabled>
+                {% if data[3] == 'text' %}
+                    <option value="Text" selected>Text</option>
+                    <option value="Image">Image</option>
+                {% else %}
+                    <option value="Text">Text</option>
+                    <option value="Image" selected>Image</option>
+                {% endif %}
+            </select>
+        </div>
+        <input type="hidden" name="type" value="{{data[3]}}"/>
+
+        <div class="field">
+            <label>Name</label>
+            <input type="text" name="name" value="{{data[0]}}" readonly required>
+        </div>
+
+        {% if data[3] == 'text' %}
+            <div class="field">
+                <label>Content</label>
+                <textarea name="content" rows=4 required>{{data[1]}}</textarea>
+            </div>
+        {% else %}
+            <div class="field"> 
+                <label>URL</label> 
+                <input type="text" name="url" value="{{data[1]}}" required> 
+            </div>
+            <div class="field">
+                <label>Rasio</label>
+                <input type="text" name="ratio" value="{{data[5]}}" required></input>
+            </div>
+            <div class="field"> 
+                <label>Alternative Text</label> 
+                <input type="text" name="alt_text" value="{{data[6]}}" required> 
+            </div>
+        {% endif %}
+
+        <div class="field">
+            <label>Description</label>
+            <textarea name="description" rows=6 required>{{data[2]}}</textarea>
+        </div>
+
+        <div class="field">
+            <label>Clearance</label>
+            <select name="clearance" class="ui search dropdown" required>
+                {% if data[4] == 1 %}
+                    <option value="1" selected>Kru</option>
+                    <option value="2">Fungs</option>
+                {% else %}
+                    <option value="1">Kru</option>
+                    <option value="2" selected>Fungs</option>
+                {% endif %}
+            </select>
+        </div>
+
+        <button class="ui positive button" type="submit">Submit</button>
+    </form>
+</div>
+
+{% include 'footer.html' %}

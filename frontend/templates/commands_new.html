@@ -1,0 +1,70 @@
+{% include 'header.html' %}
+
+
+<div class="ui main text container">
+    <h1> Create New Command</h1>
+    <div class="ui divider"></div>
+
+    <form class="ui form" action="/commands" method="post">
+
+        <div id="selectCategory" class="field">
+            <label>Type</label>
+            <select name="type" class="ui search dropdown" required>
+                <option value="Text">Text</option>
+                <option value="Image">Image</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label>Name</label>
+            <input type="text" name="name" placeholder="Nama Perintah Baru" required>
+        </div>
+                
+        <div id="addCategory1" class="field">
+        </div>
+
+        <div id="content" class="field">
+            <label>Content</label>
+            <textarea name="content" rows=4 placeholder="Balasan" required></textarea>
+        </div>
+
+        <div id="addCategory2" class="field">
+        </div>
+
+        <div class="field">
+            <label>Description</label>
+            <textarea name="description" rows=6 placeholder="Penjelasan" required></textarea>
+        </div>
+
+        <div class="field">
+            <label>Clearance</label>
+            <select name="clearance" class="ui search dropdown" required>
+                <option value="1">Kru</option>
+                <option value="2">Fungs</option>
+            </select>
+        </div>
+
+        <button class="ui positive button" type="submit">Submit</button>
+    </form>
+</div>
+
+
+
+<script>
+    $("#selectCategory").change(function () {
+        if ($("#selectCategory option:selected").text() == "Image") {
+            $("#addCategory1").html('<div class="field"> <label>URL</label> <input type="text" name="url" placeholder="Pranala Gambar" required> </div>');
+            $("#addCategory2").html('<div class="field"> <label>Alternative Text</label> <input type="text" name="alt_text" placeholder="Keterangan Gambar" required> </div>');
+            $("#content").html('<div class="field"> <label>Rasio</label> <input type="text" name="ratio" placeholder="Rasio Gambar" required> </div>');
+        } else {
+            $("#content").html('<div id="content" class="field"> <label>Content</label> <textarea name="content" rows=4 placeholder="Balasan" required> </textarea> </div>');
+            $("#showImage").html('');
+            $("#addCategory1").html('');
+            $("#addCategory2").html('');
+        }
+    })
+        .trigger("change");
+</script>
+
+
+{% include 'footer.html' %}

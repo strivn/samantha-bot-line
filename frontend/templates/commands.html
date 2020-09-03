@@ -1,0 +1,59 @@
+{% include 'header.html' %}
+
+<div class="ui main container">
+    <h1 class="ui header">Commands List</h1>
+    <p>Laman ini ditujukan untuk mengatur perintah apa saja yang tersedia dalam Bot LINE Samantha</p>
+    
+    <div onclick="location.href='/commands/new';" class="ui right floated labeled icon positive button">
+        <i class="plus icon"></i>
+        Tambah Baru
+    </div>
+</div>
+
+
+<div class="ui tables container">
+    <table id="command-table" class="ui celled table">
+        <thead>
+            <th>Name</th>
+            <th>Content</th>
+            <th>Description</th>
+            <th class="one wide">Type</th>
+            <th class="one wide">Clearance</th>
+            <th class="one wide"></th>
+        </thead>
+        <tbody>
+            {% for name, content_or_url, description, type, clearance in data %}
+            <tr>
+                <td>{{name}}</td>
+                {% if type == 'image'%}
+                    <td><img class="ui small image" src="{{content_or_url}}"</td>
+                {% else %}
+                    <td>{{content_or_url}}</td>
+                {% endif %}
+                <td>{{description}}</td>
+                <td>{{type}}</td>
+                <td>{{clearance}}</td>
+                <td>
+                    <div class="ui buttons">
+                        <button onclick="location.href='/commands/{{name}}';" class="ui small icon yellow button"><i class="edit outline icon"></i></button>
+                        <button onclick="ensureDelete('{{name}}')" class="ui small icon red button"><i class="trash alternate outline icon deleteButton"></i></button>
+                    </div>
+                </td>
+            </tr>
+            {% endfor%}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function ensureDelete(name){
+        if (confirm("Are you sure you want to delete " + name + "?")){
+            if (prompt("Type the command's name in lowercase") === name){
+                location.href = "/commands/delete/" + name;
+            }   
+        }
+    }
+</script>
+
+
+{% include 'footer.html' %}

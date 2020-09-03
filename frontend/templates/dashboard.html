@@ -1,0 +1,31 @@
+{% include 'header.html' %}
+
+
+<div class="ui main container">
+    <h1 class="ui header">Dashboard</h1>
+    <p>Dashboard ini ditujukan untuk memperlihatkan data penggunaan Bot LINE Samantha</p>
+</div>
+
+<div class="ui tables container">
+
+    <table id="full-history-table" class="ui celled table">
+        <thead>
+            <th>Timestamp</th>
+            <th>Display Name</th>
+            <th>Command Used</th>
+        </thead>
+        <tbody>
+            {% for row in data %}
+            <tr>
+                <td data-label="Timestamp">{{row[0]}}</td>
+                <td data-label="Display Name">{{row[1]}}</td>
+                <td data-label="Command Used">{{row[2]}}</td>
+            </tr>
+            {% endfor%}
+        </tbody>
+    </table>
+</div>
+
+
+
+{% include 'footer.html' %}
