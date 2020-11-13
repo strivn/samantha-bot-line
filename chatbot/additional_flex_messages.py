@@ -95,7 +95,11 @@ def create_image_bubble(ratio, url):
             "size": "full",
             "aspectRatio": ratio,
             "aspectMode": "cover",
-            "url": url
+            "url": url,
+            "action": {
+                "type": "uri",
+                "uri": url
+            }
         }
     }
     return bubble
