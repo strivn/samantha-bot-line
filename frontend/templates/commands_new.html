@@ -17,7 +17,7 @@
 
         <div class="field">
             <label>Name</label>
-            <input type="text" name="name" placeholder="Nama Perintah Baru" required>
+            <input type="text" name="name" placeholder="Nama perintah baru" required>
         </div>
                 
         <div id="addCategory1" class="field">
@@ -33,7 +33,7 @@
 
         <div class="field">
             <label>Description</label>
-            <textarea name="description" rows=6 placeholder="Penjelasan" required></textarea>
+            <textarea name="description" rows=6 placeholder="Penjelasan perintah. Penjelasan akan ditampilkan ketika pengguna menggunakan ?help [nama perintah]" required></textarea>
         </div>
 
         <div class="field">
@@ -53,9 +53,9 @@
 <script>
     $("#selectCategory").change(function () {
         if ($("#selectCategory option:selected").text() == "Image") {
-            $("#addCategory1").html('<div class="field"> <label>URL</label> <input type="text" name="url" placeholder="Pranala Gambar" required> </div>');
-            $("#addCategory2").html('<div class="field"> <label>Alternative Text</label> <input type="text" name="alt_text" placeholder="Keterangan Gambar" required> </div>');
-            $("#content").html('<div class="field"> <label>Rasio</label> <input type="text" name="ratio" placeholder="Rasio Gambar" required> </div>');
+            $("#addCategory1").html('<div class="field"> <label>URL</label> <input type="text" name="url" placeholder="Pranala gambar" required> </div>');
+            $("#addCategory2").html('<div class="field"> <label>Alternative Text</label> <input type="text" name="alt_text" placeholder="Keterangan atau deskripsi singkat mengenai gambar." required> </div>');
+            $("#content").html('<div class="field"> <label>Rasio</label> <input type="text" name="ratio" placeholder="Rasio gambar" required> </div>');
         } else {
             $("#content").html('<div id="content" class="field"> <label>Content</label> <textarea name="content" rows=4 placeholder="Balasan" required> </textarea> </div>');
             $("#showImage").html('');
