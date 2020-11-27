@@ -208,10 +208,12 @@ def handle_follow(event):
         welcome_reply = 'Halo, {}! Kenalkan aku Samantha, bot untuk membantu kru LFM. Kalau penasaran aku bisa membantu apa saja, kirim aja \n`?Help`'.format(
             profile.display_name)
         onboarding_reply = 'Oh iya, coba dulu yuk kirim `?Agenda` atau `?NowShowing`, atau pencet aja menu yang udah disediain!'
+        privacy_notice = "Omong-omong, aku akan merekam kapan dan fitur apa yang kalian gunakan ya. Kalau kalian tidak mau, karena belum ada sistem untuk opt-out, berkabar saja supaya rekamannya dihapus."
         all_reply = [TextSendMessage(text=welcome_reply),
                      StickerSendMessage(package_id='11537',
                                         sticker_id='52002734'),
-                     TextSendMessage(text=onboarding_reply)]
+                     TextSendMessage(text=onboarding_reply),
+                     TextSendMessage(text=privacy_notice)]
     elif user_type == 1:
         welcome_reply = 'Halo, {}! Kenalkan aku Samantha, bot untuk membantu kru LFM. Tampaknya kamu tidak ada di Muda Beo. Maaf, aku tidak bisa membantumu.'.format(
             profile.display_name)
