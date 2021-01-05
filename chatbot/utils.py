@@ -5,7 +5,7 @@ import pytz
 timezone = pytz.timezone("Asia/Jakarta")
 
 
-def get_dates(text):
+def parse_upcoming_movies_params(text):
     now = timezone.localize(datetime.now())
     text = [word.lower() for word in text]
     # default: bulan ini
@@ -21,10 +21,22 @@ def get_dates(text):
     else:
         start_date = now
         end_date = start_date + timedelta(days=+30)
+
+    if "us" in text:
+        region = 'US'
+    elif "jp" in text:
+        region = 'JP'
+    elif "uk" in text:
+        region = 'UK'
+    elif "fr" in text:
+        region = 'FR'
+    else: # defaults to Indonesia
+        region = ''
+
     start_date = start_date.strftime('%Y-%m-%d')
     end_date = end_date.strftime('%Y-%m-%d')
 
-    return start_date, end_date
+    return start_date, end_date, region
 
 
 def translate_words_to_date(text):

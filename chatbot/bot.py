@@ -31,7 +31,7 @@ from .movie_service import (
     get_movie_details, create_movie_details_bubble
 )
 
-from .utils import get_dates, translate_date_to_words, translate_words_to_date
+from .utils import parse_upcoming_movies_params, translate_date_to_words, translate_words_to_date
 
 
 # line messaging api
@@ -137,9 +137,9 @@ def execute_command(event, text_string):
                         line_bot_api.reply_message(event.reply_token, FlexSendMessage(
                             alt_text=alt_text, contents=create_lfm_agenda(str(duration))))
                 elif command_string == 'upcomingmovies':
-                    start_date, end_date = get_dates(other_string)
+                    start_date, end_date, region = parse_upcoming_movies_params(other_string)
                     line_bot_api.reply_message(event.reply_token, FlexSendMessage(alt_text="Upcoming Movies", contents=create_upcoming_movies_carousel(
-                        discover_movies(start_date=start_date, end_date=end_date))))
+                        discover_movies(start_date=start_date, end_date=end_date, region=region))))
                 elif command_string == 'nowshowing':
                     line_bot_api.reply_message(event.reply_token, FlexSendMessage(
                         alt_text="Now Showing", contents=create_now_showing_carousel(get_now_showing())))

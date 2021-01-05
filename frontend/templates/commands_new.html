@@ -55,7 +55,7 @@
         if ($("#selectCategory option:selected").text() == "Image") {
             $("#addCategory1").html('<div class="field"> <label>URL</label> <input type="text" name="url" placeholder="Pranala gambar" required> </div>');
             $("#addCategory2").html('<div class="field"> <label>Alternative Text</label> <input type="text" name="alt_text" placeholder="Keterangan atau deskripsi singkat mengenai gambar." required> </div>');
-            $("#content").html('<div class="field"> <label>Rasio</label> <input type="text" name="ratio" placeholder="Rasio gambar" required> </div>');
+            $("#content").html('<div class="field"> <label>Rasio</label> <input type="text" name="ratio" placeholder="Rasio gambar, contohnya seperti 1:1.5 atau 1:1.25." required> </div>');
         } else {
             $("#content").html('<div id="content" class="field"> <label>Content</label> <textarea name="content" rows=4 placeholder="Balasan" required> </textarea> </div>');
             $("#showImage").html('');

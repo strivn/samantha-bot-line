@@ -112,9 +112,9 @@ def discover_movies(start_date=None, end_date=None, region='ID'):
     }
     # additional parameters
     if start_date:
-        params['primary_release_date.gte'] = start_date
+        params['release_date.gte'] = start_date
     if end_date:
-        params['primary_release_date.lte'] = end_date
+        params['release_date.lte'] = end_date
     if region:
         params['region'] = region
     # send request and return response
