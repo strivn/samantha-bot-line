@@ -31,7 +31,7 @@ def parse_upcoming_movies_params(text):
     elif "fr" in text:
         region = 'FR'
     else: # defaults to Indonesia
-        region = ''
+        region = 'ID'
 
     start_date = start_date.strftime('%Y-%m-%d')
     end_date = end_date.strftime('%Y-%m-%d')
