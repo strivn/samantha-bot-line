@@ -1,6 +1,7 @@
 import os
 import json
 
+from collections import Counter
 from datetime import datetime
 from dateutil import parser
 
@@ -24,8 +25,11 @@ def check_login():
 
 def render():
     if check_login():
-        data = get_all_api_calls()
-        return render_template('dashboard.html', data=data)
+        api_calls_history = get_all_api_calls()
+        api_calls_summary = get_api_calls_timestamp_counter()
+        values = json.dumps(list(api_calls_summary.values()))
+        axis = json.dumps(list(api_calls_summary.keys()))
+        return render_template('dashboard.html', data=api_calls_history, values=values, axis=axis)
     return redirect('/login')
 
 
@@ -170,6 +174,22 @@ def get_all_api_calls():
 
     if success:
         return list(map(format_date, results))
+
+
+def get_api_calls_timestamp_counter():
+    query = "SELECT timestamp FROM api_calls"
+    success, results = _run_query(conn, query)
+
+    if success:
+        # convert the query results (datetime string) into datetime format
+        datetime_results = [parser.parse(item[0]) for item in results]
+        # only take the date
+        date_results = [item.date().isoformat() for item in datetime_results]
+        # count occurences per date
+        date_calls_counter = Counter(date_results)
+    else:
+        date_calls_counter = None
+    return date_calls_counter
 
 
 def get_all_commands():

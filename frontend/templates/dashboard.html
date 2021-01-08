@@ -1,10 +1,14 @@
 {% include 'header.html' %}
 
-
 <div class="ui main container">
     <h1 class="ui header">Dashboard</h1>
     <p>Dashboard ini ditujukan untuk memperlihatkan data penggunaan Bot LINE Samantha</p>
 </div>
+
+<div class="ui container">
+    <canvas id="commandsUsed" width="900" height="300"></canvas>
+</div>
+
 
 <div class="ui tables container">
 
@@ -27,5 +31,31 @@
 </div>
 
 
-
+<script>
+    var ctx = $('#commandsUsed');
+    var dates = JSON.parse({{axis|tojson|safe}})
+    var chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: dates,
+            datasets: [{
+                label: 'Jumlah command yang digunakan',
+                backgroundColor: 'rgb(230, 230, 230)',
+                borderColor: 'rgb(200, 200, 200)',
+                data: {{values}},
+                lineTension: 0.25,
+            }]
+        },
+        options: {
+            scales: {
+                    xAxes: [{
+                        type: 'time',
+                        time: {
+                            unit: 'month',
+                        }
+                    }]
+            }
+        }
+    });
+</script>
 {% include 'footer.html' %}
