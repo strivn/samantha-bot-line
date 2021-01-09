@@ -8,9 +8,11 @@ from dateutil import parser
 import psycopg2
 import pytz
 
+from cachetools.func import ttl_cache
 from flask import render_template, redirect, request, abort, session
 
 from chatbot.database_service import _run_query
+from chatbot.calendar_service import timezone
 
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
@@ -22,14 +24,21 @@ def check_login():
         return True
     return False
 
-
 def render():
     if check_login():
+        # get everything
         api_calls_history = get_all_api_calls()
-        api_calls_summary = get_api_calls_timestamp_counter()
-        values = json.dumps(list(api_calls_summary.values()))
-        axis = json.dumps(list(api_calls_summary.keys()))
-        return render_template('dashboard.html', data=api_calls_history, values=values, axis=axis)
+        # from the data selected, count occurences per day
+        timestamp_count = get_api_calls_timestamp_counter(api_calls_history)
+        timestamp_values = json.dumps(list(timestamp_count.values()))
+        timestamp_axis = json.dumps(list(timestamp_count.keys()))
+        # from the data selected, count occurences per command, take 5 most common
+        commands_count = get_api_calls_counter(
+            api_calls_history).most_common(5)
+        # generate a list of values only, as commands_count produces a list of tuples
+        commands_values = json.dumps([t[1] for t in commands_count])
+        commands_axis = json.dumps([t[0] for t in commands_count])
+        return render_template('dashboard.html', data=api_calls_history, timestamp_values=timestamp_values, timestamp_axis=timestamp_axis, commands_axis=commands_axis, commands_values=commands_values)
     return redirect('/login')
 
 
@@ -158,6 +167,7 @@ def create_new_command():
     return abort(403)
 
 
+@ttl_cache(maxsize=2, ttl=3600)
 def get_all_api_calls():
     query = "SELECT timestamp, display_name, api_call FROM api_calls JOIN followers ON followers.user_id = api_calls.user_id"
 
@@ -175,23 +185,37 @@ def get_all_api_calls():
     if success:
         return list(map(format_date, results))
 
+def get_api_calls_timestamp_counter(data, max_days=90):
 
-def get_api_calls_timestamp_counter():
-    query = "SELECT timestamp FROM api_calls"
-    success, results = _run_query(conn, query)
-
-    if success:
-        # convert the query results (datetime string) into datetime format
-        datetime_results = [parser.parse(item[0]) for item in results]
-        # only take the date
-        date_results = [item.date().isoformat() for item in datetime_results]
-        # count occurences per date
-        date_calls_counter = Counter(date_results)
+    if data:
+        timestamps = [item[0][5:15] for item in data]  # take only the dates
+        
+        # convert to datetime to get the last `max_days` days
+        dates = [datetime.strptime(timestamp, '%d-%m-%Y').date()
+                 for timestamp in timestamps]
+        now = timezone.localize(datetime.now()).date()
+        sorted_dates = [date for date in dates if (
+            now - date).days <= max_days]
+        
+        # convert back to string
+        date_calls_counter = Counter(
+            [d.isoformat() for d in sorted_dates])
     else:
-        date_calls_counter = None
+        return None
+
     return date_calls_counter
 
+def get_api_calls_counter(data):
 
+    if data:
+        commands_used = [item[2].lower() for item in data]
+        api_calls_counter = Counter(commands_used)
+    else:
+        return None
+
+    return api_calls_counter
+
+@ttl_cache(maxsize=2, ttl=3600)
 def get_all_commands():
     query = "SELECT * FROM commands WHERE type='text' OR type='image'"
 
@@ -212,7 +236,7 @@ def get_all_commands():
     else:
         return abort(500)
 
-
+@ttl_cache(maxsize=2, ttl=3600)
 def get_all_users():
     query = "SELECT display_name, user_type FROM followers"
 

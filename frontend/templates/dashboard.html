@@ -5,8 +5,13 @@
     <p>Dashboard ini ditujukan untuk memperlihatkan data penggunaan Bot LINE Samantha</p>
 </div>
 
-<div class="ui container">
-    <canvas id="commandsUsed" width="900" height="300"></canvas>
+<div class="ui two column grid container">
+    <div class="column">
+        <canvas id="timestampCount" width="560" height="300"></canvas>
+    </div>
+    <div class="column">
+        <canvas id="commandsCount" width="560" height="300"></canvas>
+    </div>
 </div>
 
 
@@ -32,30 +37,70 @@
 
 
 <script>
-    var ctx = $('#commandsUsed');
-    var dates = JSON.parse({{axis|tojson|safe}})
-    var chart = new Chart(ctx, {
+    var ctx = $('#timestampCount');
+    var dates = JSON.parse({{ timestamp_axis| tojson | safe}})
+    var timechart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: dates,
             datasets: [{
-                label: 'Jumlah command yang digunakan',
+                label: 'Jumlah',
                 backgroundColor: 'rgb(230, 230, 230)',
                 borderColor: 'rgb(200, 200, 200)',
-                data: {{values}},
-                lineTension: 0.25,
-            }]
+                data: {{ timestamp_values }},
+        lineTension: 0.1,
+    }]
         },
+    options: {            
+        title: {
+            display: true,
+            text: "Tren penggunaan 3 bulan terakhir"
+        },
+        scales: {
+            xAxes: [{
+                type: 'time',
+                time: {
+                    unit: 'week',
+                }
+            }],                
+            yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        precision: 0,
+                    }
+            }]
+        }
+    }
+    });
+    
+    var ctx2 = $('#commandsCount');
+    var commandNames = JSON.parse({{ commands_axis | tojson | safe}})
+    var barchart = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: commandNames,
+            datasets: [{
+                label: 'Jumlah',
+                data: {{ commands_values }},
+                borderWidth: 1
+                    }],
+                backgroundColor: 'rgb(230, 230, 230)',
+                borderColor: 'rgb(200, 200, 200)',
+                },
         options: {
+            title: {
+                display: true,
+                text: "Command yang paling sering digunakan"
+            },
             scales: {
-                    xAxes: [{
-                        type: 'time',
-                        time: {
-                            unit: 'month',
-                        }
-                    }]
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
             }
         }
-    });
+        });
 </script>
+
 {% include 'footer.html' %}
