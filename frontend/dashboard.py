@@ -2,14 +2,13 @@ import os
 import json
 
 from collections import Counter
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil import parser
 
 import psycopg2
 import pytz
 
-from cachetools.func import ttl_cache
-from flask import render_template, redirect, request, abort, session
+from flask import render_template, redirect, request, abort, session, escape
 
 from chatbot.database_service import _run_query
 from chatbot.calendar_service import timezone
@@ -24,13 +23,15 @@ def check_login():
         return True
     return False
 
+
 def render():
     if check_login():
         # get everything
         api_calls_history = get_all_api_calls()
         # from the data selected, count occurences per day
         timestamp_count = get_api_calls_timestamp_counter(api_calls_history)
-        timestamp_values = json.dumps(list(timestamp_count.values()))
+        timestamp_values = json.dumps(
+            [x-1 for x in list(timestamp_count.values())])
         timestamp_axis = json.dumps(list(timestamp_count.keys()))
         # from the data selected, count occurences per command, take 5 most common
         commands_count = get_api_calls_counter(
@@ -86,7 +87,17 @@ def update_command(command_name):
                 "alt_text": command_alt_text,
             }
             command_content = json.dumps(content)
-        else:
+        elif command_type == 'image carousel':
+            command_url = request.form['url']
+            command_ratio = request.form['ratio']
+            command_alt_text = request.form['alt_text']
+            content = {
+                "ratio": command_ratio,
+                "url": command_url.splitlines(),
+                "alt_text": command_alt_text,
+            }
+            command_content = json.dumps(content)
+        elif command_type == 'text':
             command_content = request.form['content']
 
         query = "UPDATE commands SET type=%s, description=%s, clearance=%s, content=%s WHERE name=%s"
@@ -112,7 +123,11 @@ def edit_command(command_name):
             if result:
                 if result[3] == 'image':
                     image_data = json.loads(result[1])
-                    result = result[0], image_data['url'], result[2], result[3], result[4], image_data['ratio'], image_data['alt_text'],
+                    result = result[0], image_data['url'], result[2], result[3], result[4], image_data['ratio'], image_data['alt_text']
+                elif result[3] == 'image carousel':
+                    image_data = json.loads(result[1])
+                    result = result[0], '\r\n'.join(
+                        image_data['url']), result[2], result[3], result[4], image_data['ratio'], image_data['alt_text']
                 return render_template('commands_edit.html', data=result)
         else:
             return abort(404)
@@ -151,7 +166,17 @@ def create_new_command():
                 "alt_text": command_alt_text,
             }
             command_content = json.dumps(content)
-        else:
+        elif command_type == 'image carousel':
+            command_url = request.form['url']
+            command_ratio = request.form['ratio']
+            command_alt_text = request.form['alt_text']
+            content = {
+                "ratio": command_ratio,
+                "url": command_url.splitlines(),
+                "alt_text": command_alt_text,
+            }
+            command_content = json.dumps(content)
+        elif command_type == 'text':
             command_content = request.form['content']
 
         query = "INSERT INTO commands (type, name, description, clearance, content) VALUES (%s, %s, %s, %s, %s)"
@@ -167,7 +192,6 @@ def create_new_command():
     return abort(403)
 
 
-@ttl_cache(maxsize=2, ttl=3600)
 def get_all_api_calls():
     query = "SELECT timestamp, display_name, api_call FROM api_calls JOIN followers ON followers.user_id = api_calls.user_id"
 
@@ -185,25 +209,30 @@ def get_all_api_calls():
     if success:
         return list(map(format_date, results))
 
-def get_api_calls_timestamp_counter(data, max_days=90):
+
+def get_api_calls_timestamp_counter(data, max_days=60):
 
     if data:
         timestamps = [item[0][5:15] for item in data]  # take only the dates
-        
+
         # convert to datetime to get the last `max_days` days
         dates = [datetime.strptime(timestamp, '%d-%m-%Y').date()
                  for timestamp in timestamps]
         now = timezone.localize(datetime.now()).date()
         sorted_dates = [date for date in dates if (
             now - date).days <= max_days]
-        
+
+        # add other dates that don't have any occurence
+        other_dates = [now - timedelta(days=x) for x in range(max_days)]
+
         # convert back to string
         date_calls_counter = Counter(
-            [d.isoformat() for d in sorted_dates])
+            [d.isoformat() for d in other_dates + sorted_dates])
     else:
         return None
 
     return date_calls_counter
+
 
 def get_api_calls_counter(data):
 
@@ -215,28 +244,28 @@ def get_api_calls_counter(data):
 
     return api_calls_counter
 
-@ttl_cache(maxsize=2, ttl=3600)
+
 def get_all_commands():
-    query = "SELECT * FROM commands WHERE type='text' OR type='image'"
+    query = "SELECT * FROM commands WHERE type='text' OR type='image' OR type='image carousel'"
 
     return_data = []
     success, results = _run_query(conn, query)
 
     if success:
         for result in results:
-            if result[3] == 'image':
+            if result[3] == 'image' or result[3] == 'image carousel':
                 image_data = json.loads(result[1])
                 return_data.append(
-                    (result[0], image_data['url'], result[2], result[3], result[4]))
-            else:
+                    (escape(result[0]), image_data['url'], escape(result[2]), result[3], result[4]))
+            elif result[3] == 'text':
                 return_data.append(
-                    (result[0], result[1], result[2], result[3], result[4]))
+                    (escape(result[0]), escape(result[1]), escape(result[2]), result[3], result[4]))
         return return_data
 
     else:
         return abort(500)
 
-@ttl_cache(maxsize=2, ttl=3600)
+
 def get_all_users():
     query = "SELECT display_name, user_type FROM followers"
 
