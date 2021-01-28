@@ -21,12 +21,11 @@ def whats_sop_kru(option):
             'https://docs.google.com/uc?id=19lNO-k8okTlbKAPFkKs8HVDTVmgUmFai',
             'https://docs.google.com/uc?id=1jYK1YY2wcL4XYCLD_OUFQ8tuQocFt7zo',
             'https://docs.google.com/uc?id=11ssqsA09vH2P9XzzcyUFX3lSHxib1W54',
-            'https://docs.google.com/uc?id=11ssqsA09vH2P9XzzcyUFX3lSHxib1W54'
+            'https://docs.google.com/uc?id=1-zx193hywcP_saIUrDgW5XmZFTqAv0uT'
         ]
     elif option == 2:
         # page 10 to 18
         urls_whatsop_kru = [
-            'https://docs.google.com/uc?id=1-zx193hywcP_saIUrDgW5XmZFTqAv0uT',
             'https://docs.google.com/uc?id=1oQfdyHZtxuMFQGJOTegu-3PO3yhbb_zT',
             'https://docs.google.com/uc?id=1NZq7sZlgZ4v4SOQi3g4hps-ziAYQrad1',
             'https://docs.google.com/uc?id=1C2ywpYR7PgLOt23sg_gYxLBL9lQZ_5NW',
@@ -87,12 +86,14 @@ def sukacita():
     return carousel
 
 
-def create_image_bubble(ratio, url):
+def create_image_bubble(ratio, url, animated=False):
+    # animated image only supports APNG image (max size: 300KB)
     bubble = {
         "type": "bubble",
         "hero": {
             "type": "image",
             "size": "full",
+            "animated": animated,
             "aspectRatio": ratio,
             "aspectMode": "cover",
             "url": url,
