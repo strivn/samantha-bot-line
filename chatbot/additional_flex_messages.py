@@ -55,36 +55,7 @@ def whats_sop_kru(option):
     }
 
     return carousel
-
-
-def sukacita():
-    content = []
-
-    url = [
-        'https://docs.google.com/uc?id=1NxBFgUD2wqOFUQtxmMBwFwyVn8iRNLoN',
-        'https://docs.google.com/uc?id=1MnR1ZFlrJARivaLcorGcdqMT_4-AS8eG',
-        'https://docs.google.com/uc?id=1I9lGdTCotzF92eyiz2U7UOW6c-ZAUBNg'
-    ]
-
-    for i in range(3):
-        content.append({
-            "type": "bubble",
-            "hero": {
-                "type": "image",
-                "size": "full",
-                "aspectRatio": "1:1",
-                "aspectMode": "cover",
-                "url": url[i]
-            }
-        })
-
-    carousel = {
-        "type": "carousel",
-        "contents": content
-    }
-
-    return carousel
-
+    
 
 def create_image_bubble(ratio, url, animated=False):
     # animated image only supports APNG image (max size: 300KB)
@@ -106,47 +77,15 @@ def create_image_bubble(ratio, url, animated=False):
     return bubble
 
 
-def adhikarya():
-    bubble = {
-        "type": "bubble",
-        "hero": {
-            "type": "image",
-            "size": "full",
-            "aspectRatio": "1:2",
-            "aspectMode": "cover",
-            "url": "https://docs.google.com/uc?id=16pYCPng607QvlNPj3V053ytw-bto7qZF"
-        },
-        "footer": {
-            "type": "box",
-            "layout": "horizontal",
-            "spacing": "md",
-            "contents": [{
-                "type": "spacer",
-                "size": "md"
-            }, {
-                "type": "button",
-                "height": "sm",
-                "action": {
-                    "type": "uri",
-                    "label": "Foto",
-                    "uri": "https://drive.google.com/open?id=1Gi-7QspS8S8-USJyCk6lPhrDZjjHkGgo",
-                },
-                "style": "secondary",
-                "color": "#F1F1F1",
-                "flex": 2
-            }, {
-                "type": "button",
-                "height": "sm",
-                "action": {
-                    "type": "uri",
-                    "label": "Video",
-                    "uri": "https://drive.google.com/open?id=1n0iAt1RULxpBLwyQj-LXxFu-t2_QIgbm",
-                },
-                "style": "secondary",
-                "color": "#F1F1F1",
-                "flex": 2
-            }]
-        }
+def create_image_carousel(ratio, urls):
+    content = []
+
+    for i in range(len(urls)):
+        content.append(create_image_bubble(ratio, urls[i]))
+
+    carousel = {
+        "type": "carousel",
+        "contents": content
     }
 
-    return bubble
+    return carousel

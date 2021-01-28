@@ -17,7 +17,7 @@ from linebot.exceptions import (
     InvalidSignatureError, LineBotApiError
 )
 
-from .additional_flex_messages import whats_sop_kru, sukacita, adhikarya, create_image_bubble
+from .additional_flex_messages import whats_sop_kru, create_image_bubble, create_image_carousel
 from .calendar_service import create_fungs_agenda, create_lfm_agenda
 
 from .database_service import (
@@ -124,6 +124,14 @@ def execute_command(event, text_string):
                     line_bot_api.reply_message(event.reply_token, TextSendMessage(
                         text=('Mau diganti sama apa kodenya?')))
 
+            elif c_type == 'image carousel':
+                # unpack the content first into ratio and image url
+                ratio, image_urls, alt_text = json.loads(c_content).values()
+                # then create the content bubble using ratio and image url
+                content = create_image_carousel(ratio, image_urls)
+                line_bot_api.reply_message(event.reply_token, FlexSendMessage(
+                    alt_text=alt_text, contents=content))
+
             # for complex replies [to do list], not yet added to database
             elif c_type == 'others':
                 if command_string == 'agenda':
@@ -146,18 +154,13 @@ def execute_command(event, text_string):
                 elif command_string == 'whatsopkru':
                     line_bot_api.reply_message(event.reply_token, [FlexSendMessage(alt_text="What SOP' Kroe!", contents=whats_sop_kru(
                         1)), FlexSendMessage(alt_text="What SOP' Kroe!", contents=whats_sop_kru(2))])
-                elif command_string == 'sukacita':
-                    line_bot_api.reply_message(event.reply_token, FlexSendMessage(
-                        alt_text="Sukacita!", contents=sukacita()))
-                elif command_string == 'adhikarya':
-                    line_bot_api.reply_message(event.reply_token, FlexSendMessage(
-                        alt_text="Adhikarya", contents=adhikarya()))
                 elif command_string == 'filefem':
                     bubble = create_image_bubble("1:1.414","https://i.ibb.co/NLyCzx6/clickme-PERATURAN.jpg")
                     line_bot_api.reply_message(event.reply_token, [
                         FlexSendMessage(alt_text="FiLEFEM", contents=bubble),
                         TextSendMessage(text="bit.ly/FiLEFEM\n\nAkses file LFM seperti hasil DK, Kinefolk, materi Pendidikan, hasil edit DVD, koleksi film, dan lainnya disini ya kru!")
                     ])
+
 
             elif c_type == 'help':
 
@@ -167,7 +170,7 @@ def execute_command(event, text_string):
                 # general help
                 else:
                     # commands available for kru
-                    commands = '\n  • ?Agenda \n  • ?NowShowing \n  • ?UpcomingMovies \n  • ?Database \n  • ?KodeLemariOren \n  • ?FTP \n  • ?Surat \n  • ?FAQSurat \n  • ?TrackRecord \n  • ?LinkKinekuniya \n  • ?WhatSOPKru \n  • ?Sukacita \n  • ?Netflix \n  • ?Adhikarya \n  • ?KitMakingMovies'
+                    commands = '\n  • ?Agenda \n  • ?NowShowing \n  • ?UpcomingMovies \n  • ?Database \n  • ?KodeLemariOren \n  • ?FTP \n  • ?Surat \n  • ?FAQSurat \n  • ?TrackRecord \n  • ?LinkKinekuniya \n  • ?WhatSOPKru \n  • ?Netflix \n  • ?KitMakingMovies \n  • ?Alkhazini \n  • ?PinjamDisney+ \n  • ?YukSukacita'
                     # commands available only for fungs
                     if authenticate(event.source, 2):
                         commands += '\n\n  • ?KodeRulat \n  • ?GantiKodeRulat \n  • ?KodeLokerDoksos \n  • ?GantiKodeLokerDoksos \n  • ?PasswordEneng \n  • ?GantiPasswordEneng \n  • ?PasswordCici \n  • ?GantiPasswordCici'

@@ -13,9 +13,15 @@
                 {% if data[3] == 'text' %}
                     <option value="Text" selected>Text</option>
                     <option value="Image">Image</option>
-                {% else %}
+                    <option value='Image Carousel'>Image Carousel</option>
+                {% elif data[3] == 'image carousel' %}
+                    <option value="Text">Text</option>
+                    <option value="Image">Image</option>
+                    <option value='Image Carousel' selected>Image Carousel</option>
+                {% elif data[3] == 'image' %}
                     <option value="Text">Text</option>
                     <option value="Image" selected>Image</option>
+                    <option value='Image Carousel'>Image Carousel</option>
                 {% endif %}
             </select>
         </div>
@@ -31,7 +37,20 @@
                 <label>Content</label>
                 <textarea name="content" rows=4 required>{{data[1]}}</textarea>
             </div>
-        {% else %}
+        {% elif data[3] == 'image carousel' %}
+            <div class="field"> 
+                <label>URL</label> 
+                <textarea name="url" required>{{data[1] | safe }}</textarea>
+            </div>
+            <div class="field">
+                <label>Rasio</label>
+                <input type="text" name="ratio" value="{{data[5]}}" required></input>
+            </div>
+            <div class="field"> 
+                <label>Alternative Text</label> 
+                <input type="text" name="alt_text" value="{{data[6]}}" required> 
+            </div>
+        {% elif data[3] == 'image' %}
             <div class="field"> 
                 <label>URL</label> 
                 <input type="text" name="url" value="{{data[1]}}" required> 

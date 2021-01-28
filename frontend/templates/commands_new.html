@@ -12,6 +12,7 @@
             <select name="type" class="ui search dropdown" required>
                 <option value="Text">Text</option>
                 <option value="Image">Image</option>
+                <option value="Image Carousel">Image Carousel</option>
             </select>
         </div>
 
@@ -54,6 +55,10 @@
     $("#selectCategory").change(function () {
         if ($("#selectCategory option:selected").text() == "Image") {
             $("#addCategory1").html('<div class="field"> <label>URL</label> <input type="text" name="url" placeholder="Pranala gambar" required> </div>');
+            $("#addCategory2").html('<div class="field"> <label>Alternative Text</label> <input type="text" name="alt_text" placeholder="Keterangan atau deskripsi singkat mengenai gambar." required> </div>');
+            $("#content").html('<div class="field"> <label>Rasio</label> <input type="text" name="ratio" placeholder="Rasio gambar, contohnya seperti 1:1.5 atau 1:1.25." required> </div>');
+        } else if ($("#selectCategory option:selected").text() == "Image Carousel") {
+            $("#addCategory1").html('<div class="field"> <label>URL</label> <textarea name="url" placeholder="Pranala gambar-gambar. Pisahkan tiap pranala dengan enter (baris baru). MAKSIMAL 9 GAMBAR" required></textarea> </div>');
             $("#addCategory2").html('<div class="field"> <label>Alternative Text</label> <input type="text" name="alt_text" placeholder="Keterangan atau deskripsi singkat mengenai gambar." required> </div>');
             $("#content").html('<div class="field"> <label>Rasio</label> <input type="text" name="ratio" placeholder="Rasio gambar, contohnya seperti 1:1.5 atau 1:1.25." required> </div>');
         } else {

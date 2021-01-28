@@ -15,24 +15,36 @@
     <table id="command-table" class="ui celled table">
         <thead>
             <th>Name</th>
+            <th class="one wide">Type</th>
             <th>Content</th>
             <th>Description</th>
-            <th class="one wide">Type</th>
             <th class="one wide">Clearance</th>
-            <th class="one wide"></th>
+            <th class="one wide">Edit</th>
         </thead>
         <tbody>
             {% for name, content_or_url, description, type, clearance in data %}
             <tr>
                 <td>{{name}}</td>
-                {% if type == 'image'%}
+                <td>{{type}}</td>
+                {% if type == 'image' %}
                     <td><img class="ui small image" src="{{content_or_url}}"</td>
-                {% else %}
+                {% elif type == 'image carousel' %}
+                    <td>
+                        {% for url in content_or_url %}
+                            {{ url }}<br>
+                        {% endfor %}
+                    </td>
+                {% elif type == 'text' %}
                     <td>{{content_or_url}}</td>
                 {% endif %}
                 <td>{{description}}</td>
-                <td>{{type}}</td>
-                <td>{{clearance}}</td>
+                <td>
+                {% if clearance == 1 %}
+                    Kru
+                {% elif clearance == 2 %}
+                    Fungs
+                {% endif %}
+                </td>
                 <td>
                     <div class="ui buttons">
                         <button onclick="location.href='/commands/{{name}}';" class="ui small icon yellow button"><i class="edit outline icon"></i></button>
@@ -40,7 +52,7 @@
                     </div>
                 </td>
             </tr>
-            {% endfor%}
+            {% endfor %}
         </tbody>
     </table>
 </div>
