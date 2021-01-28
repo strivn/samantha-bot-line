@@ -12,6 +12,7 @@ from flask import render_template, redirect, request, abort, session, escape
 
 from chatbot.database_service import _run_query
 from chatbot.calendar_service import timezone
+from chatbot.bot import line_bot_api
 
 DATABASE_URL = os.environ.get('DATABASE_URL')
 

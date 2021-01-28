@@ -1,14 +1,11 @@
 # to get image from a google drive link use:
 # https://docs.google.com/uc?id=[id]
 
-
 def whats_sop_kru(option):
     '''
     returns a carousel made of whatsop kru page images.
     the option argument should be either 1 or 2, 1 for the first half and 2 for the second part
     '''
-
-    content = []
 
     if option == 1:
         # page 1 to 9
@@ -37,25 +34,8 @@ def whats_sop_kru(option):
             'https://docs.google.com/uc?id=1AD590n8j8yyku6aYtGQCVGB25OMRfN4C'
         ]
 
-    for url in urls_whatsop_kru:
-        content.append({
-            "type": "bubble",
-            "hero": {
-                "type": "image",
-                "size": "full",
-                "aspectRatio": "1:1.5",
-                "aspectMode": "cover",
-                "url": url
-            }
-        })
+    return create_image_carousel("1:1.5", urls_whatsop_kru)
 
-    carousel = {
-        "type": "carousel",
-        "contents": content
-    }
-
-    return carousel
-    
 
 def create_image_bubble(ratio, url, animated=False):
     # animated image only supports APNG image (max size: 300KB)

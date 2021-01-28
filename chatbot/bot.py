@@ -10,7 +10,7 @@ from linebot import (
 from linebot.models import (
     MessageEvent, FollowEvent, UnfollowEvent, JoinEvent, PostbackEvent,
     TextMessage, TextSendMessage, FlexSendMessage, StickerSendMessage,
-    SourceRoom, SourceGroup
+    SourceRoom, SourceGroup, QuickReply, QuickReplyButton, MessageAction
 )
 
 from linebot.exceptions import (
@@ -145,7 +145,8 @@ def execute_command(event, text_string):
                         line_bot_api.reply_message(event.reply_token, FlexSendMessage(
                             alt_text=alt_text, contents=create_lfm_agenda(str(duration))))
                 elif command_string == 'upcomingmovies':
-                    start_date, end_date, region = parse_upcoming_movies_params(other_string)
+                    start_date, end_date, region = parse_upcoming_movies_params(
+                        other_string)
                     line_bot_api.reply_message(event.reply_token, FlexSendMessage(alt_text="Upcoming Movies", contents=create_upcoming_movies_carousel(
                         discover_movies(start_date=start_date, end_date=end_date, region=region))))
                 elif command_string == 'nowshowing':
@@ -155,12 +156,13 @@ def execute_command(event, text_string):
                     line_bot_api.reply_message(event.reply_token, [FlexSendMessage(alt_text="What SOP' Kroe!", contents=whats_sop_kru(
                         1)), FlexSendMessage(alt_text="What SOP' Kroe!", contents=whats_sop_kru(2))])
                 elif command_string == 'filefem':
-                    bubble = create_image_bubble("1:1.414","https://i.ibb.co/NLyCzx6/clickme-PERATURAN.jpg")
+                    bubble = create_image_bubble(
+                        "1:1.414", "https://i.ibb.co/NLyCzx6/clickme-PERATURAN.jpg")
                     line_bot_api.reply_message(event.reply_token, [
                         FlexSendMessage(alt_text="FiLEFEM", contents=bubble),
-                        TextSendMessage(text="bit.ly/FiLEFEM\n\nAkses file LFM seperti hasil DK, Kinefolk, materi Pendidikan, hasil edit DVD, koleksi film, dan lainnya disini ya kru!")
+                        TextSendMessage(
+                            text="bit.ly/FiLEFEM\n\nAkses file LFM seperti hasil DK, Kinefolk, materi Pendidikan, hasil edit DVD, koleksi film, dan lainnya disini ya kru!")
                     ])
-
 
             elif c_type == 'help':
 
@@ -170,7 +172,7 @@ def execute_command(event, text_string):
                 # general help
                 else:
                     # commands available for kru
-                    commands = '\n  • ?Agenda \n  • ?NowShowing \n  • ?UpcomingMovies \n  • ?Database \n  • ?KodeLemariOren \n  • ?FTP \n  • ?Surat \n  • ?FAQSurat \n  • ?TrackRecord \n  • ?LinkKinekuniya \n  • ?WhatSOPKru \n  • ?Netflix \n  • ?KitMakingMovies \n  • ?Alkhazini \n  • ?PinjamDisney+ \n  • ?YukSukacita'
+                    commands = '\n  • ?Agenda \n  • ?NowShowing \n  • ?UpcomingMovies \n  • ?Database \n  • ?KodeLemariOren \n  • ?FiLEFEM \n  • ?FTP \n  • ?FAQSurat \n  • ?TrackRecord \n  • ?LinkKinekuniya \n  • ?WhatSOPKru \n  • ?KitMakingMovies \n  • ?Alkhazini \n  • ?PinjamDisney+ \n  • ?PinjamNetflix \n  • ?YukSukacita'
                     # commands available only for fungs
                     if authenticate(event.source, 2):
                         commands += '\n\n  • ?KodeRulat \n  • ?GantiKodeRulat \n  • ?KodeLokerDoksos \n  • ?GantiKodeLokerDoksos \n  • ?PasswordEneng \n  • ?GantiPasswordEneng \n  • ?PasswordCici \n  • ?GantiPasswordCici'
@@ -178,14 +180,27 @@ def execute_command(event, text_string):
                     reply = "Halo! \nAku bisa bantu kru sekalian dengan beberapa perintah, diantaranya: " + commands + \
                         "\n\nKalau masih bingung perintahnya untuk apa, coba ketik ?Help dan nama perintahnya, \nmisal: ?Help Agenda "
 
+                # create quick reply buttons
+                quick_reply_buttons = QuickReply(items=[
+                    QuickReplyButton(action=MessageAction(
+                        label="Agenda 📅", text="?Agenda")),
+                    QuickReplyButton(action=MessageAction(
+                        label="Now Showing 🍿", text="?NowShowing")),
+                    QuickReplyButton(action=MessageAction(
+                        label="Upcoming Movies 🎬", text="?UpcomingMovies")),
+                    QuickReplyButton(action=MessageAction(
+                        label="FiLEFEM 📑", text="?FiLEFEM"))
+                ])
+
                 # send the message
                 line_bot_api.reply_message(
-                    event.reply_token, TextSendMessage(text=reply))
+                    event.reply_token, TextSendMessage(
+                        text=reply, quick_reply=quick_reply_buttons))
 
 
-@handler.add(MessageEvent, message=TextMessage)
+@ handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    text = event.message.text
+    text=event.message.text
 
     if text[0] == '?':
         if text.split()[0] == "?Register":
@@ -196,12 +211,12 @@ def handle_message(event):
         execute_command(event, text)
 
 
-@handler.add(FollowEvent)
+@ handler.add(FollowEvent)
 def handle_follow(event):
     # get profile
-    profile = line_bot_api.get_profile(event.source.user_id)
+    profile=line_bot_api.get_profile(event.source.user_id)
 
-    # check if user exists in Muda Beo (change readme to muda beo id later on)
+    # check if user exists in Muda Beo
     try:
         line_bot_api.get_group_member_profile(
             lfm_muda_beo_id, event.source.user_id)
@@ -213,45 +228,54 @@ def handle_follow(event):
     # add said profile to database
     add_follower(profile.user_id, profile.display_name, user_type)
 
-    if user_type == 0:
-        welcome_reply = 'Halo, {}! Kenalkan aku Samantha, bot untuk membantu kru LFM. Kalau penasaran aku bisa membantu apa saja, kirim aja \n`?Help`'.format(
+    if user_type == 1:
+        welcome_reply='Halo, {}! Kenalkan aku Samantha, bot untuk membantu kru LFM. Kalau penasaran aku bisa membantu apa saja, kirim aja \n`?Help`'.format(
             profile.display_name)
-        onboarding_reply = 'Oh iya, coba dulu yuk kirim `?Agenda` atau `?NowShowing`, atau pencet aja menu yang udah disediain!'
-        privacy_notice = "Omong-omong, aku akan merekam kapan dan fitur apa yang kalian gunakan ya. Kalau kalian tidak mau, karena belum ada sistem untuk opt-out, berkabar saja supaya rekamannya dihapus."
-        all_reply = [TextSendMessage(text=welcome_reply),
+        onboarding_reply='Oh iya, coba dulu yuk kirim `?Agenda` atau `?NowShowing`, atau pencet aja menu yang udah disediain!'
+        privacy_notice="Omong-omong, aku akan merekam kapan dan fitur apa yang kalian gunakan ya. Kalau kalian tidak mau, karena belum ada sistem untuk opt-out, berkabar saja supaya rekamannya dihapus ya."
+        quick_reply_onboard=QuickReply(items=[
+            QuickReplyButton(action=MessageAction(
+                label="Help 🙋", text="?Help")),
+            QuickReplyButton(action=MessageAction(
+                label="Agenda 📅", text="?Agenda")),
+            QuickReplyButton(action=MessageAction(
+                label="Now Showing 🍿", text="?NowShowing"))
+        ])
+        all_reply=[TextSendMessage(text=welcome_reply),
                      StickerSendMessage(package_id='11537',
                                         sticker_id='52002734'),
-                     TextSendMessage(text=onboarding_reply),
-                     TextSendMessage(text=privacy_notice)]
-    elif user_type == 1:
-        welcome_reply = 'Halo, {}! Kenalkan aku Samantha, bot untuk membantu kru LFM. Tampaknya kamu tidak ada di Muda Beo. Maaf, aku tidak bisa membantumu.'.format(
+                     TextSendMessage(text=onboarding_reply,
+                                     ),
+                     TextSendMessage(text=privacy_notice, quick_reply=quick_reply_onboard)]
+    elif user_type == 0:
+        welcome_reply='Halo, {}! Kenalkan aku Samantha, bot untuk membantu kru LFM. Tampaknya kamu tidak ada di Muda Beo. Maaf, aku tidak bisa membantumu.'.format(
             profile.display_name)
-        all_reply = [TextSendMessage(text=welcome_reply)]
+        all_reply=[TextSendMessage(text=welcome_reply)]
 
     # send a welcoming message and onboarding
     line_bot_api.reply_message(event.reply_token, all_reply)
 
 
-@handler.add(JoinEvent)
+@ handler.add(JoinEvent)
 def handle_join(event):
     # get group id
     if isinstance(event.source, SourceGroup):
-        reply = "Halo kru! Aku perlu catat nama grupnya dulu nih, tolong kirim ?Register dan nama grupnya. Contoh: ?Register LFM Muda Beo. Terus kalau udah, kabarin ke Ivan yaa. \nTerimakasih!"
+        reply="Halo kru! Aku perlu catat nama grupnya dulu nih, tolong kirim ?Register dan nama grupnya. Contoh: ?Register LFM Muda Beo. Terus kalau udah, kabarin ke Ivan yaa. \nTerimakasih!"
         line_bot_api.reply_message(event.reply_token, [TextSendMessage(
             reply), StickerSendMessage(package_id='11537', sticker_id='52002739')])
     if isinstance(event.source, SourceRoom):
-        reply = "Halo! Maaf belum bisa bantu di multichat nih. Hehe"
+        reply="Halo! Maaf belum bisa bantu di multichat nih. Hehe"
         line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
         line_bot_api.leave_room(event.source.room_id)
 
 
-@handler.add(UnfollowEvent)
+@ handler.add(UnfollowEvent)
 def handle_unfollow(event):
     remove_follower(event.source.user_id)
 
 
-@handler.add(PostbackEvent)
+@ handler.add(PostbackEvent)
 def handle_postback(event):
-    movie_id = int(event.postback.data)
+    movie_id=int(event.postback.data)
     line_bot_api.reply_message(event.reply_token, FlexSendMessage(
         alt_text="Movie Details", contents=create_movie_details_bubble(get_movie_details(movie_id))))
