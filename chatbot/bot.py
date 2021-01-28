@@ -154,6 +154,13 @@ def execute_command(event, text_string):
                 elif command_string == 'whatsopkru':
                     line_bot_api.reply_message(event.reply_token, [FlexSendMessage(alt_text="What SOP' Kroe!", contents=whats_sop_kru(
                         1)), FlexSendMessage(alt_text="What SOP' Kroe!", contents=whats_sop_kru(2))])
+                elif command_string == 'filefem':
+                    bubble = create_image_bubble("1:1.414","https://i.ibb.co/NLyCzx6/clickme-PERATURAN.jpg")
+                    line_bot_api.reply_message(event.reply_token, [
+                        FlexSendMessage(alt_text="FiLEFEM", contents=bubble),
+                        TextSendMessage(text="bit.ly/FiLEFEM\n\nAkses file LFM seperti hasil DK, Kinefolk, materi Pendidikan, hasil edit DVD, koleksi film, dan lainnya disini ya kru!")
+                    ])
+
 
             elif c_type == 'help':
 
