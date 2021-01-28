@@ -268,7 +268,7 @@ def get_all_commands():
 
 
 def get_all_users():
-    query = "SELECT display_name, user_type FROM followers"
+    query = "SELECT display_name, user_type, picture_url FROM followers"
 
     success, results = _run_query(conn, query)
 

@@ -15,9 +15,16 @@
             <th>Clearance</th>
         </thead>
         <tbody>
-            {% for display_name, clearance in data %}
+            {% for display_name, clearance, profile_url in data %}
             <tr>
-                <td>{{display_name}}</td>
+                <td>
+                    {% if profile_url %}
+                        <image class="ui avatar image" src="{{profile_url}}"> 
+                    {% else %}
+                        <div class="ui avatar image"></div> 
+                    {% endif %}  
+                    {{display_name}}
+                </td>
                 <td>
                     <div class="ui toggle checkbox">
                         {% if clearance == 2 %}

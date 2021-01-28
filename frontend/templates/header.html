@@ -74,20 +74,32 @@
                 "paging": false,
             });
         });
+
+        var current_path = window.location.pathname
+        
+        $(function (){
+            if (current_path === '/') {
+                $('#menu-main').addClass('active')
+            } else if (current_path === '/commands') {
+                $('#menu-commands').addClass('active')
+            } else if (current_path === '/users') {
+                $('#menu-users').addClass('active')
+            }
+        });
     </script>
 
 </head>
 
 <body>
 
-    <div class="ui fixed inverted menu">
+    <div class="ui fixed inverted stackable menu">
         <div class="ui container">
             <a href="/" class="header item">
                 <img class="ui avatar image" src={{ url_for('static', filename='Samantha.png' ) }}>
                 Bot LINE Samantha
             </a>
-            <a href="/" class="item">Dashboard</a>
-            <a href="/commands" class="item">Commands List</a>
-            <a href="/users" class="item">Users List</a>
+            <a href="/" id='menu-main' class="item">Dashboard</a>
+            <a href="/commands" id='menu-commands' class="item">Commands List</a>
+            <a href="/users" id='menu-users' class="item">Users List</a>
         </div>
     </div>
