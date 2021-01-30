@@ -51,9 +51,37 @@
             margin: 5em 0em 0em;
             padding: 5em 0em;
         }
+
+        #dropdown-menu {
+            display: none
+        }
+
+        @media(max-width: 600px) {
+            #dropdown-menu {
+                display: inline-block
+            }
+
+            #normal-menu {
+                display: none
+            }
+        }
+
     </style>
 
     <script type="text/javascript" class="init">
+
+        var current_path = window.location.pathname
+
+        $(function (){
+            if (current_path === '/') {
+                $('#menu-main').addClass('active')
+            } else if (current_path === '/commands') {
+                $('#menu-commands').addClass('active')
+            } else if (current_path === '/users') {
+                $('#menu-users').addClass('active')
+            }
+        });
+
         $(document).ready(function () {
             $('#full-history-table').DataTable({
                 "scrollY": "400px",
@@ -71,35 +99,41 @@
 
         $(document).ready(function () {
             $('#user-table').DataTable({
+                "scrollY": "400px",
+                "scrollCollapse": true,
                 "paging": false,
             });
         });
 
-        var current_path = window.location.pathname
-        
-        $(function (){
-            if (current_path === '/') {
-                $('#menu-main').addClass('active')
-            } else if (current_path === '/commands') {
-                $('#menu-commands').addClass('active')
-            } else if (current_path === '/users') {
-                $('#menu-users').addClass('active')
-            }
-        });
+        $(window).on('resize', function() {
+            if ($(this).width() < 1024) {
+                $("#graphs").removeClass("two column").addClass("one column");
+            }});
     </script>
 
 </head>
 
 <body>
 
-    <div class="ui fixed inverted stackable menu">
-        <div class="ui container">
+    <div class="ui fixed inverted menu">
+        <div id='normal-menu' class="ui container">
             <a href="/" class="header item">
-                <img class="ui avatar image" src={{ url_for('static', filename='Samantha.png' ) }}>
+                <img class="ui avatar image" src=/static/Samantha.png>
                 Bot LINE Samantha
             </a>
             <a href="/" id='menu-main' class="item">Dashboard</a>
             <a href="/commands" id='menu-commands' class="item">Commands List</a>
             <a href="/users" id='menu-users' class="item">Users List</a>
+        </div>
+        <div id='dropdown-menu' class="ui pointing dropdown link item">
+            <span>
+                <img class="ui avatar image" src=/static/Samantha.png>Bot LINE Samantha
+                <i class="dropdown icon"></i>
+            </span>
+            <div class="menu inverted">
+                <a href="/" id='menu-main' class="item">Dashboard</a>
+                <a href="/commands" id='menu-commands' class="item">Commands List</a>
+                <a href="/users" id='menu-users' class="item">Users List</a>
+            </div>
         </div>
     </div>

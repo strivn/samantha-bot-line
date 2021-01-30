@@ -122,28 +122,6 @@ def discover_movies(start_date=None, end_date=None, region='ID'):
     return response.json()['results']
 
 
-@ttl_cache(maxsize=128, ttl=14400)
-def get_movie_details(movie_id):
-    # url and default parameter (api key and movie id is required)
-    url = 'https://api.themoviedb.org/3/movie/{}'.format(movie_id)
-    credits_url = 'https://api.themoviedb.org/3/movie/{}/credits'.format(
-        movie_id)
-
-    params = {
-        'api_key': movie_api_key
-    }
-
-    response = requests.get(url, params=params)
-    response_credits = requests.get(credits_url, params=params)
-
-    respjson = response.json()
-
-    for key, value in response_credits.json().items():
-        respjson[key] = value
-
-    return respjson
-
-
 def create_now_showing_carousel(movies):
 
     # initiate variables
@@ -338,187 +316,32 @@ def create_upcoming_movies_bubble(movie):
         "hero": {
                 "type": "image",
                 "size": "full",
-                "aspectRatio": "1:1.33",
+                "aspectRatio": "2:3",
                 "aspectMode": "cover",
-                "url": "https://image.tmdb.org/t/p/w500{}".format(movie['poster_path'])
+                "action": {
+                    "type": "uri",
+                    "label": "Details..",
+                    "uri": "https://www.themoviedb.org/movie/{}".format(str(movie['id'])),
+                },
+            "url": "https://image.tmdb.org/t/p/w500{}".format(movie['poster_path'])
         },
         "body": {
             "type": "box",
             "layout": "horizontal",
             "contents": [{
-                    "type": "box",
-                    "layout": "vertical",
-                    "flex": 4,
-                    "spacing": "sm",
-                    "contents": contents
-            },
-                {
-                "type": "image",
-                    "flex": 1,
-                    "size": "xxs",
-                    "aspectMode": "fit",
-                    "url": "https://www.themoviedb.org/assets/2/v4/logos/293x302-powered-by-square-blue-ee05c47ab249273a6f9f1dcafec63daba386ca30544567629deb1809395d8516.png"
-            }]
-        },
-        "footer": {
-            "type": "box",
-            "layout": "horizontal",
-            "contents": [{
-                "type": "spacer",
-                "size": "md"
+                "type": "box",
+                "layout": "vertical",
+                "flex": 4,
+                "spacing": "sm",
+                "contents": contents
             }, {
-                "type": "button",
-                "height": "sm",
-                # "action": {
-                #         "type": "postback",
-                #         "label": "Details..",
-                #         "data": "{}".format(str(movie['id'])),
-                # },
-                "action": {
-                        "type": "uri",
-                        "label": "Details..",
-                        "uri": "https://www.themoviedb.org/movie/{}".format(str(movie['id'])),
-                },
-                "style": "secondary",
-                "color": "#F1F1F1",
-                "flex": 2
+                "type": "image",
+                "flex": 1,
+                "size": "xxs",
+                "aspectMode": "fit",
+                "url": "https://www.themoviedb.org/assets/2/v4/logos/293x302-powered-by-square-blue-ee05c47ab249273a6f9f1dcafec63daba386ca30544567629deb1809395d8516.png"
             }]
         }
-    }
-
-    return bubble
-
-
-def create_movie_details_bubble(movie):
-    contents = []
-    # add title
-    contents.append({
-        "type": "text",
-        "text": movie['title'],
-        "weight": "bold",
-        "size": "sm",
-        "wrap": True
-    })
-
-    if movie['runtime']:
-        contents.append({
-            "type": "text",
-            "text": "{} minutes ".format(movie['runtime']),
-            "size": "xs"
-        })
-
-    # add crew information
-    if movie['crew']:
-        directors = []
-        screenplays = []
-
-        for person in movie['crew']:
-            if (person['job'] == 'Director'):
-                directors.append(person['name'])
-            elif (person['job'] == 'Script' or person['job'] == 'Writer' or person['job'] == 'Screenplay'):
-                screenplays.append(person['name'])
-
-        # Add the directors
-        if (directors):
-            crew_contents = []
-            crew_contents.append({
-                "type": "text",
-                "wrap": True,
-                "text": "Director:",
-                "flex": 1,
-                "size": "xxs"
-            })
-            crew_contents.append({
-                "type": "text",
-                "text": ', '.join(directors),
-                "wrap": True,
-                "flex": 3,
-                "size": "xxs",
-                "weight": "bold"
-            })
-            contents.append({
-                "type": "box",
-                "spacing": "xs",
-                "layout": "horizontal",
-                "contents": crew_contents
-            })
-
-        # Add the screenwriters
-        if (screenplays):
-            crew_contents = []
-            crew_contents.append({
-                "type": "text",
-                "wrap": True,
-                "flex": 1,
-                "text": "Script: ",
-                "size": "xxs"
-            })
-            crew_contents.append({
-                "type": "text",
-                "text": ', '.join(screenplays),
-                "wrap": True,
-                "flex": 3,
-                "size": "xxs",
-                "weight": "bold"
-            })
-
-            contents.append({
-                "type": "box",
-                "spacing": "xs",
-                "layout": "horizontal",
-                "contents": crew_contents
-            })
-
-    # add movie description
-    if (movie['overview']):
-        contents.append({
-            "type": "text",
-            "wrap": True,
-            "text": movie['overview'],
-            "size": "xs"
-        })
-    else:
-        contents.append({
-            "type": "text",
-            "wrap": True,
-            "text": "-",
-            "size": "xs"
-        })
-    # add movie website
-    if (movie['homepage']):
-        contents.append({
-            "type": "text",
-            "text": "{}".format(movie['homepage']),
-            "size": "xxs",
-        })
-
-    bubble = {
-        "type": "bubble",
-        "hero": {
-                "type": "image",
-                "size": "full",
-                "aspectRatio": "1:1.33",
-                "aspectMode": "cover",
-                "url": "https://image.tmdb.org/t/p/w500{}".format(movie['poster_path'])
-        },
-        "body": {
-            "type": "box",
-            "layout": "horizontal",
-            "contents": [{
-                    "type": "box",
-                    "layout": "vertical",
-                    "flex": 4,
-                    "spacing": "sm",
-                    "contents": contents
-            },
-                {
-                "type": "image",
-                    "flex": 1,
-                    "size": "xxs",
-                    "aspectMode": "fit",
-                    "url": "https://www.themoviedb.org/assets/2/v4/logos/293x302-powered-by-square-blue-ee05c47ab249273a6f9f1dcafec63daba386ca30544567629deb1809395d8516.png"
-            }]
-        },
     }
 
     return bubble

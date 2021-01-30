@@ -27,7 +27,7 @@
                 <td>{{name}}</td>
                 <td>{{type}}</td>
                 {% if type == 'image' %}
-                    <td><img class="ui small image" src="{{content_or_url}}"</td>
+                    <td><img class="ui small image" src="{{content_or_url}}"></td>
                 {% elif type == 'image carousel' %}
                     <td>
                         {% for url in content_or_url %}

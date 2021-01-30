@@ -13,7 +13,7 @@ conn = psycopg2.connect(DATABASE_URL)
 
 CHANNEL_ID = os.environ.get('CHANNEL_LOGIN_ID')
 CHANNEL_SECRET = os.environ.get('CHANNEL_LOGIN_SECRET')
-REDIRECT_URI = 'https://samantha-bot-line.herokuapp.com/login/callback'
+REDIRECT_URI = os.environ.get('LOGIN_REDIRECT_URI')
 
 
 def redirect_login():
