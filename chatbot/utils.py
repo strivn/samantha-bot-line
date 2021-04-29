@@ -44,19 +44,19 @@ def translate_words_to_date(text):
         duration = 30
     elif ("minggu" in text and "ini" in text):
         duration = 7
-    elif (text.isdigit()):
+    elif text.isdigit():
         duration = text
     # default condition, return a week (7 days)
     else:
         duration = 7
 
-    return str(duration)
+    return duration
 
 
 def translate_date_to_words(days):
     if days == 7:
         return_value = 'Seminggu'
-    elif days == 30 or days == 31:
+    elif days in (30, 31):
         return_value = 'Sebulan'
     else:
         return_value = str(days) + ' Hari'

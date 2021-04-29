@@ -8,3 +8,6 @@ psycopg2==2.8.6
 python-dateutil==2.8.1
 pytz==2019.3
 pyjwt==1.7.1
+google-api-python-client 
+google-auth-httplib2 
+google-auth-oauthlib

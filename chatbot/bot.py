@@ -148,10 +148,10 @@ def execute_command(event, text_string):
                         translate_date_to_words(int(duration)) + " Kedepan"
                     if authenticate(event.source, 2):
                         line_bot_api.reply_message(event.reply_token, FlexSendMessage(
-                            alt_text=alt_text, contents=create_fungs_agenda(str(duration))))
+                            alt_text=alt_text, contents=create_fungs_agenda(duration)))
                     else:
                         line_bot_api.reply_message(event.reply_token, FlexSendMessage(
-                            alt_text=alt_text, contents=create_lfm_agenda(str(duration))))
+                            alt_text=alt_text, contents=create_lfm_agenda(duration)))
                 
                 elif command_string == 'upcomingmovies':
                     start_date, end_date, region = parse_upcoming_movies_params(
@@ -162,15 +162,6 @@ def execute_command(event, text_string):
                 elif command_string == 'nowshowing':
                     line_bot_api.reply_message(event.reply_token, FlexSendMessage(
                         alt_text="Now Showing", contents=create_now_showing_carousel(get_now_showing())))
-                
-                elif command_string == 'filefem':
-                    bubble = create_image_bubble(
-                        "1:1.414", "https://i.ibb.co/NLyCzx6/clickme-PERATURAN.jpg")
-                    line_bot_api.reply_message(event.reply_token, [
-                        FlexSendMessage(alt_text="FiLEFEM", contents=bubble),
-                        TextSendMessage(
-                            text="bit.ly/FiLEFEM\n\nAkses file LFM seperti hasil DK, Kinefolk, materi Pendidikan, hasil edit DVD, koleksi film, dan lainnya disini ya kru!")
-                    ])
 
             elif c_type == 'help':
 
@@ -180,7 +171,7 @@ def execute_command(event, text_string):
                 # general help
                 else:
                     # commands available for kru
-                    commands = '\n  • ?Agenda \n  • ?NowShowing \n  • ?UpcomingMovies \n  • ?Database \n  • ?KodeLemariOren \n  • ?FiLEFEM \n  • ?FTP \n  • ?FAQSurat \n  • ?TrackRecord \n  • ?LinkKinekuniya \n  • ?WhatSOPKru \n  • ?KitMakingMovies \n  • ?Alkhazini \n  • ?PinjamDisney+ \n  • ?PinjamNetflix \n  • ?YukSukacita'
+                    commands = '\n  • ?Agenda \n  • ?NowShowing \n  • ?UpcomingMovies \n  • ?Database \n  • ?FiLEFEM \n  • ?FTP \n  • ?FAQSurat \n  • ?TrackRecord \n  • ?WhatSOPKru \n  • ?KitMakingMovies \n  • ?Alkhazini \n  • ?PinjamDisney+ \n  • ?PinjamNetflix \n  • ?YukSukacita'
                     # commands available only for fungs
                     if authenticate(event.source, 2):
                         commands += '\n\n  • ?KodeRulat \n  • ?GantiKodeRulat \n  • ?KodeLokerDoksos \n  • ?GantiKodeLokerDoksos \n  • ?PasswordEneng \n  • ?GantiPasswordEneng \n  • ?PasswordCici \n  • ?GantiPasswordCici'
