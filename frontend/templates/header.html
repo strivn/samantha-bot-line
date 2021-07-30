@@ -79,6 +79,8 @@
                 $('#menu-commands').addClass('active')
             } else if (current_path === '/users') {
                 $('#menu-users').addClass('active')
+            } else if (current_path === '/groups') {
+                $('#menu-groups').addClass('active')
             }
         });
 
@@ -124,6 +126,8 @@
             <a href="/" id='menu-main' class="item">Dashboard</a>
             <a href="/commands" id='menu-commands' class="item">Commands List</a>
             <a href="/users" id='menu-users' class="item">Users List</a>
+            <a href="/groups" id='menu-groups' class="item">Groups List</a>
+
         </div>
         <div id='dropdown-menu' class="ui pointing dropdown link item">
             <span>
@@ -134,6 +138,7 @@
                 <a href="/" id='menu-main' class="item">Dashboard</a>
                 <a href="/commands" id='menu-commands' class="item">Commands List</a>
                 <a href="/users" id='menu-users' class="item">Users List</a>
+                <a href="/groups" id='menu-groups' class="item">Groups List</a>
             </div>
         </div>
     </div>

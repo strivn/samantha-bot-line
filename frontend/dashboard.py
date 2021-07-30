@@ -194,7 +194,7 @@ def create_new_command():
 
 
 def get_all_api_calls():
-    query = "SELECT timestamp, display_name, api_call FROM api_calls JOIN followers ON followers.user_id = api_calls.user_id"
+    query = "SELECT timestamp, display_name, api_call FROM api_calls JOIN followers ON followers.user_id = api_calls.user_id ORDER BY timestamp ASC"
 
     def format_date(api_call):
         date = parser.parse(api_call[0])
@@ -277,7 +277,6 @@ def get_all_users():
 
 
 def toggle_user_clearance(display_name):
-
     query = "SELECT user_type FROM followers WHERE display_name=%s"
     parameters = [display_name]
 
@@ -296,3 +295,37 @@ def toggle_user_clearance(display_name):
             return "False"
     else:
         return "False"
+
+
+
+def render_groups():
+    if check_login():
+        data = get_all_groups()
+        return (render_template('groups.html', data=data))
+    return abort(403)
+
+
+def get_all_groups():
+    query = "SELECT group_id, group_name, group_type FROM groups"
+
+    success, results = _run_query(conn, query)
+
+    if success:
+        return results
+
+
+def change_group_clearance(group_id):
+    if check_login():
+        group_type = request.form['clearance']
+        parameters = [group_type, group_id]
+
+        query = "UPDATE groups SET group_type=%s WHERE group_id=%s"
+
+        success, _ = _run_query(conn, query, parameters)
+
+        if success:
+            return "True"
+        else:
+            return "False"
+    else:
+        abort(403)

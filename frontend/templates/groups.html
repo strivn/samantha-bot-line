@@ -1,0 +1,58 @@
+{% include 'header.html' %}
+
+
+<div class="ui main container">
+    <h1 class="ui header">Groups List</h1>
+    <p>Laman ini ditujukan untuk mengatur pengguna grup dalam Bot LINE Samantha</p>
+</div>
+
+
+<div class="ui tables container">
+    <table id="group-table" class="ui celled table">
+        <thead>
+            <th>Group Name</th>
+            <th>Clearance</th>
+        </thead>
+        <tbody>
+            {% for group_id, group_name, clearance in data %}
+            <tr>
+                <td>
+                    {{group_name}}
+                </td>
+                <td>
+                    <select id="{{group_id}}" class="ui fluid dropdown" onchange="onSelectChange(this)">
+                        {% if clearance == 2 %}
+                        <option value='2' selected>Grup Fungsionaris</option>
+                        <option value='1'>Grup Kru</option>
+                        <option value='0'>Tidak dianggap</option>
+                        {% elif clearance == 1 %}
+                        <option value='2'>Grup Fungsionaris</option>
+                        <option value='1' selected>Grup Kru</option>
+                        <option value='0'>Tidak dianggap</option>
+                        {% elif clearance == 0 %}
+                        <option value='2'>Grup Fungsionaris</option>
+                        <option value='1'>Grup Kru</option>
+                        <option value='0' selected>Tidak dianggap</option>
+                        {% endif %}
+                    </select>
+                </td>
+            </tr>
+            {% endfor%}
+        </tbody>
+    </table>
+</div>
+
+<script>
+
+    function updateClearance(group_id, clearance) {
+        $.post('/groups/' + group_id, {clearance: clearance});
+    }    
+    
+    function onSelectChange(obj) {
+        group_id = obj.id;
+        value = obj.value;
+        updateClearance(group_id, value);
+    }
+</script>
+
+{% include 'footer.html' %}

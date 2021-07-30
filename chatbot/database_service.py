@@ -118,7 +118,7 @@ def update_code(item, code):
     '''
     update a code
 
-    currently there are only 3 items:
+    currently there are only these items:
 
     - ruang_alat
     - loker_doksos

@@ -24,7 +24,13 @@ app.add_url_rule('/callback', view_func=bot.callback, methods=['POST'])
 
 # users
 app.add_url_rule('/users', view_func=dashboard.render_users, methods=['GET'])
-app.add_url_rule('/users/<display_name>', view_func=dashboard.toggle_clearance, methods=['POST'])
+app.add_url_rule('/users/<display_name>',
+                 view_func=dashboard.toggle_clearance, methods=['POST'])
+
+# groups
+app.add_url_rule('/groups', view_func=dashboard.render_groups, methods=['GET'])
+app.add_url_rule('/groups/<group_id>',
+                 view_func=dashboard.change_group_clearance, methods=['POST'])
 
 # commands
 app.add_url_rule(

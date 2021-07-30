@@ -259,7 +259,7 @@ def handle_follow(event):
 def handle_join(event):
     # get group id
     if isinstance(event.source, SourceGroup):
-        reply = "Halo kru! Aku perlu catat nama grupnya dulu nih, tolong kirim ?Register dan nama grupnya. Contoh: ?Register LFM Muda Beo. Terus kalau udah, kabarin ke Ivan yaa. \nTerimakasih!"
+        reply = "Halo kru! Aku perlu catat nama grupnya dulu nih, tolong kirim ?Register dan nama grupnya. Contoh: ?Register LFM Muda Beo. Terus kalau udah, kabarin ke fungsionarisnya yaa. \nTerimakasih!"
         line_bot_api.reply_message(event.reply_token, [TextSendMessage(
             reply), StickerSendMessage(package_id='11537', sticker_id='52002739')])
     if isinstance(event.source, SourceRoom):
