@@ -61,7 +61,7 @@ def translate_words_to_date(text):
     elif ("minggu" in text and "ini" in text):
         duration = 7
     elif text.isdigit():
-        duration = text
+        duration = int(text)
     # default condition, return a week (7 days)
     else:
         duration = 7
