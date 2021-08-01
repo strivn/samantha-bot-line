@@ -23,14 +23,14 @@ from .calendar_service import create_fungs_agenda, create_lfm_agenda
 from .database_service import (
     authenticate, add_follower, add_group,
     get_code, get_command, get_command_description,
-    remove_follower, track_api_calls, update_code
+    remove_follower, track_api_calls, update_code, get_ordered_commands_by_frequency
 )
 from .movie_service import (
     create_upcoming_movies_carousel, discover_movies,
     create_now_showing_carousel, get_now_showing
 )
 
-from .utils import parse_upcoming_movies_params, translate_date_to_words, translate_words_to_date
+from .utils import parse_upcoming_movies_params, translate_date_to_words, translate_words_to_date, compose_help_message
 
 
 # line messaging api
@@ -126,7 +126,7 @@ def execute_command(event, text_string):
             elif c_type == 'image carousel':
                 # unpack the content first into ratio and image url
                 ratio, image_urls, alt_text = json.loads(c_content).values()
-                
+
                 # count how many images are in the command
                 images_count = len(image_urls)
 
@@ -137,7 +137,8 @@ def execute_command(event, text_string):
                         if image_urls_sect:
                             image_urls_sects.append(image_urls_sect)
 
-                replies = [FlexSendMessage(contents=create_image_carousel(ratio, urls_sect), alt_text=alt_text) for urls_sect in image_urls_sects]
+                replies = [FlexSendMessage(contents=create_image_carousel(
+                    ratio, urls_sect), alt_text=alt_text) for urls_sect in image_urls_sects]
                 line_bot_api.reply_message(event.reply_token, replies)
 
             # for complex replies [to do list], not yet added to database
@@ -152,13 +153,13 @@ def execute_command(event, text_string):
                     else:
                         line_bot_api.reply_message(event.reply_token, FlexSendMessage(
                             alt_text=alt_text, contents=create_lfm_agenda(duration)))
-                
+
                 elif command_string == 'upcomingmovies':
                     start_date, end_date, region = parse_upcoming_movies_params(
                         other_string)
                     line_bot_api.reply_message(event.reply_token, FlexSendMessage(alt_text="Upcoming Movies", contents=create_upcoming_movies_carousel(
                         discover_movies(start_date=start_date, end_date=end_date, region=region))))
-                
+
                 elif command_string == 'nowshowing':
                     line_bot_api.reply_message(event.reply_token, FlexSendMessage(
                         alt_text="Now Showing", contents=create_now_showing_carousel(get_now_showing())))
@@ -170,14 +171,10 @@ def execute_command(event, text_string):
                     reply = get_command_description(other_string[0])
                 # general help
                 else:
-                    # commands available for kru
-                    commands = '\n  • ?Agenda \n  • ?NowShowing \n  • ?UpcomingMovies \n  • ?Database \n  • ?FiLEFEM \n  • ?FTP \n  • ?FAQSurat \n  • ?TrackRecord \n  • ?WhatSOPKru \n  • ?KitMakingMovies \n  • ?Alkhazini \n  • ?PinjamDisney+ \n  • ?PinjamNetflix \n  • ?YukSukacita'
-                    # commands available only for fungs
-                    if authenticate(event.source, 2):
-                        commands += '\n\n  • ?KodeRulat \n  • ?GantiKodeRulat \n  • ?KodeLokerDoksos \n  • ?GantiKodeLokerDoksos \n  • ?PasswordEneng \n  • ?GantiPasswordEneng \n  • ?PasswordCici \n  • ?GantiPasswordCici'
+                    commands = get_ordered_commands_by_frequency(max_days=90)
 
-                    reply = "Halo! \nAku bisa bantu kru sekalian dengan beberapa perintah, diantaranya: " + commands + \
-                        "\n\nKalau masih bingung perintahnya untuk apa, coba ketik ?Help dan nama perintahnya, \nmisal: ?Help Agenda "
+                    reply = compose_help_message(
+                        commands, authenticate(event.source, 2))
 
                 # create quick reply buttons
                 quick_reply_buttons = QuickReply(items=[
@@ -230,8 +227,8 @@ def handle_follow(event):
     if user_type == 1:
         welcome_reply = 'Halo, {}! Kenalkan aku Samantha, bot untuk membantu kru LFM. Kalau penasaran aku bisa membantu apa saja, kirim aja \n`?Help`'.format(
             profile.display_name)
-        onboarding_reply = 'Oh iya, coba dulu yuk kirim `?Agenda` atau `?NowShowing`, atau pencet aja menu yang udah disediain!'
-        privacy_notice = "Omong-omong, aku akan merekam kapan dan fitur apa yang kalian gunakan ya. Kalau kalian tidak mau, karena belum ada sistem untuk opt-out, berkabar saja supaya rekamannya dihapus ya."
+        onboarding_reply = 'Oh iya, coba deh kirim `?Agenda` atau `?NowShowing`, atau pencet aja menu yang udah disediain!'
+        privacy_notice = "Omong-omong, aku akan merekam kapan dan fitur apa yang kamu gunakan ya. Kalau kamu tidak mau, karena belum ada sistem untuk opt-out, berkabar saja supaya rekamannya dihapus ya."
         quick_reply_onboard = QuickReply(items=[
             QuickReplyButton(action=MessageAction(
                 label="Help 🙋", text="?Help")),

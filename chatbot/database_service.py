@@ -1,6 +1,6 @@
 import os
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import psycopg2
 from linebot.models import SourceUser, SourceGroup
@@ -266,3 +266,64 @@ def authenticate(source, num):
         print("Error in update operation", e)
         print("Error: ", cursor.query)
         cursor.close()
+
+def get_ordered_commands_by_frequency(max_days=None):
+
+    '''
+    get currently available commands, sorted by their frequency of use
+
+    parameters -> 
+    max_days
+
+    max_days is used to determine which period should be considered for the count
+    '''
+    
+    query = """
+    WITH cte AS (
+        SELECT api_call, count(api_call) 
+        FROM api_calls 
+        WHERE timestamp>=%s
+        GROUP BY api_call
+    ) 
+    SELECT name, clearance, count 
+    FROM cte 
+    RIGHT JOIN commands ON cte.api_call = commands.name 
+    ORDER BY count DESC 
+    NULLS LAST
+    """
+
+    now = timezone.localize(datetime.now()).date() # ambil tanggalnya doang aja ntar
+
+    if max_days:
+        earliest_date = now - timedelta(days=max_days)
+        parameters = [earliest_date.strftime('%Y-%m-%d')]
+    else:
+        parameters = ['2019-12-01']
+
+    operation_succeed = False
+    results = []
+    # as _run_query does not support cte yet,
+    with conn.cursor() as cursor:
+        try:
+            cursor.execute(query, parameters)
+
+            results = cursor.fetchall()
+
+            conn.commit()
+            operation_succeed = True
+            print("Query completed: {}".format(cursor.query))
+
+        except (psycopg2.errors.SyntaxError, psycopg2.InternalError) as error:
+            conn.rollback()
+            print("Syntax or Internal Error: {}".format(error))
+            print("Query failed: {}".format(cursor.query))
+
+        except psycopg2.Error as other_errors:
+            conn.rollback()
+            print("Unspecified error: {}".format(other_errors))
+            print("Query failed: {}".format(cursor.query))
+
+    if operation_succeed:
+        return results
+    else:
+        return None

@@ -4,6 +4,22 @@ import pytz
 
 timezone = pytz.timezone("Asia/Jakarta")
 
+def compose_help_message(commands, authenticated):
+    '''
+    Compose the help message
+    '''
+    
+    content = ''.join(['\n  • ?{} '.format(command[0]) for command in commands if command[1] == 1])
+
+    if authenticated:
+        content += '\n\nDan ini beberapa perintah khusus untuk fungsionaris:'
+        content += ''.join(['\n  • ?{} '.format(command[0]) for command in commands if command[1] == 2])
+
+    reply = "Halo! \nAku bisa bantu kru sekalian dengan beberapa perintah, diantaranya: " + content + \
+            "\n\nKalau masih bingung perintahnya untuk apa, coba ketik ?Help dan nama perintahnya, \nmisal: ?Help Agenda "
+
+    return reply
+    
 
 def parse_upcoming_movies_params(text):
     now = timezone.localize(datetime.now())
