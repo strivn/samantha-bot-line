@@ -204,7 +204,8 @@ def handle_message(event):
                 print(event.source.group_id, ' '.join(text.split()[1:]))
                 add_group(event.source.group_id, ' '.join(text.split()[1:]))
 
-        execute_command(event, text)
+        # this should be unneeded?
+        # execute_command(event, text)
 
 
 @ handler.add(FollowEvent)
